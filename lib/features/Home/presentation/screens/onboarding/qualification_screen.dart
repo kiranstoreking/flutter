@@ -5,6 +5,7 @@ import 'package:flutter_assignment3/core/theme/app_colors.dart';
 import 'package:flutter_assignment3/core/theme/app_text_styles.dart';
 import 'package:flutter_assignment3/core/widgets/custom_button.dart';
 import 'package:flutter_assignment3/core/widgets/intro_appbar.dart';
+import 'package:flutter_assignment3/core/services/local_storage_service.dart';
 
 class EducationalBackgroundScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -49,9 +50,13 @@ class _EducationalBackgroundScreenState
   }
 
   // Handle next button press
-  void _handleNext() {
+  void _handleNext() async {
     if (_validateForm()) {
-      // Save data or pass to next screen
+      // Save data to local storage
+      final localStorage = await LocalStorageService.getInstance();
+      await localStorage.saveQualification(selectedOption!);
+
+      // Pass to next screen
       if (widget.onNext != null) {
         widget.onNext!();
       }
@@ -97,47 +102,49 @@ class _EducationalBackgroundScreenState
         totalPages: widget.totalPages,
         onBack: widget.onBack,
       ),
-      body: Padding(
-        padding: 16.allPadding,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height - kToolbarHeight,
-          ),
-          child: IntrinsicHeight(
-            child: Column(
-              children: [
-                for (var option in options)
-                  Padding(
-                    padding: 12.onlyPadding(bottom: 12),
-                    child: _buildOption(
-                      title: option["title"]!,
-                      subtitle: option["subtitle"]!,
-                      imagePath: option["image"]!,
+      body: Column(
+        children: [
+          // Scrollable content
+          Expanded(
+            child: SingleChildScrollView(
+              padding: 16.allPadding,
+              child: Column(
+                children: [
+                  for (var option in options)
+                    Padding(
+                      padding: 12.onlyPadding(bottom: 12),
+                      child: _buildOption(
+                        title: option["title"]!,
+                        subtitle: option["subtitle"]!,
+                        imagePath: option["image"]!,
+                      ),
                     ),
-                  ),
 
-                if (_validationError != null) ...[
-                  8.vSpace,
-                  Text(
-                    _validationError!,
-                    style: AppTextStyles.titleSmall.copyWith(
-                      color: AppColors.error,
-                      fontSize: 12.sp,
+                  if (_validationError != null) ...[
+                    8.vSpace,
+                    Text(
+                      _validationError!,
+                      style: AppTextStyles.titleSmall.copyWith(
+                        color: AppColors.error,
+                        fontSize: 12.sp,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
-
-                Spacer(),
-
-                CustomButton(
-                  text: "Next : Your Skills",
-                  onPressed: _handleNext,
-                ),
-                30.vSpace,
-              ],
+              ),
             ),
           ),
-        ),
+
+          // Fixed button at bottom
+          Container(
+            padding: 16.allPadding,
+            child: CustomButton(
+              text: "Next : Your Skills",
+              onPressed: _handleNext,
+            ),
+          ),
+          30.vSpace,
+        ],
       ),
     );
   }

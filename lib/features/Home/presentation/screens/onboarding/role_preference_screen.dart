@@ -6,6 +6,7 @@ import 'package:flutter_assignment3/core/theme/app_text_styles.dart';
 import 'package:flutter_assignment3/core/widgets/chips.dart';
 import 'package:flutter_assignment3/core/widgets/custom_button.dart';
 import 'package:flutter_assignment3/core/widgets/intro_appbar.dart';
+import 'package:flutter_assignment3/core/services/local_storage_service.dart';
 
 class SkillsScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -117,9 +118,13 @@ class _SkillsScreenState extends State<SkillsScreen> {
   }
 
   // Handle next button press
-  void _handleNext() {
+  void _handleNext() async {
     if (_validateForm()) {
-      // Save data or pass to next screen
+      // Save data to local storage
+      final localStorage = await LocalStorageService.getInstance();
+      await localStorage.saveSkills(_selectedSkills);
+
+      // Pass to next screen
       if (widget.onNext != null) {
         widget.onNext!();
       }
@@ -138,6 +143,7 @@ class _SkillsScreenState extends State<SkillsScreen> {
         totalPages: widget.totalPages,
         onBack: widget.onBack,
       ),
+      resizeToAvoidBottomInset: true,
       body: Padding(
         padding: 15.allPadding,
         child: Column(
@@ -243,11 +249,20 @@ class _SkillsScreenState extends State<SkillsScreen> {
               ),
             ],
             const Spacer(),
-            Padding(
-              padding: EdgeInsets.only(bottom: 20.rh),
-              child: CustomButton(
-                text: "Find My Matches",
-                onPressed: _handleNext,
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 20.rh),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth:
+                        MediaQuery.of(context).size.width -
+                        30, // Account for the 15.allPadding
+                  ),
+                  child: CustomButton(
+                    text: "Find My Matches",
+                    onPressed: _handleNext,
+                  ),
+                ),
               ),
             ),
           ],

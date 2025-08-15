@@ -6,12 +6,14 @@ import 'package:flutter_assignment3/core/theme/app_colors.dart';
 import 'package:flutter_assignment3/core/theme/app_text_styles.dart';
 import 'package:flutter_assignment3/core/widgets/custom_button.dart';
 import 'package:flutter_assignment3/core/widgets/intro_appbar.dart';
+import 'package:flutter_assignment3/core/services/local_storage_service.dart';
 
 class UserInfoScreen extends StatefulWidget {
   final VoidCallback? onBack;
   final int currentPage;
   final int totalPages;
   final VoidCallback? onNext;
+  final VoidCallback? onNameSaved;
 
   const UserInfoScreen({
     Key? key,
@@ -19,6 +21,7 @@ class UserInfoScreen extends StatefulWidget {
     required this.currentPage,
     required this.totalPages,
     this.onNext,
+    this.onNameSaved,
   }) : super(key: key);
 
   @override
@@ -173,9 +176,23 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   }
 
   // Handle next button press
-  void _handleNext() {
+  void _handleNext() async {
     if (_validateForm()) {
-      // Save data or pass to next screen
+      // Save data to local storage
+      final localStorage = await LocalStorageService.getInstance();
+      await localStorage.saveFirstName(_firstNameController.text.trim());
+      await localStorage.saveLastName(_lastNameController.text.trim());
+      await localStorage.saveGender(_selectedGender!);
+      await localStorage.saveDateOfBirth(
+        DateFormat('dd/MM/yyyy').format(_selectedDate!),
+      );
+
+      // Notify parent that name was saved
+      if (widget.onNameSaved != null) {
+        widget.onNameSaved!();
+      }
+
+      // Pass to next screen
       if (widget.onNext != null) {
         widget.onNext!();
       }
@@ -201,107 +218,115 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         totalPages: widget.totalPages,
         onBack: widget.onBack,
       ),
-      resizeToAvoidBottomInset: false,
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: 16.allPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _labelWithAsterisk("First Name"),
-                      8.vSpace,
-                      TextField(
-                        controller: _firstNameController,
-                        cursorColor: Colors.grey,
-                        decoration: _inputDecoration(
-                          hint: 'Enter your first name',
-                          errorText: _firstNameError,
-                        ),
-                        onChanged: (value) {
-                          if (_firstNameError != null) {
-                            setState(() {
-                              _firstNameError = null;
-                            });
-                          }
-                        },
-                      ),
-                      20.vSpace,
-
-                      _labelWithAsterisk("Last Name"),
-                      8.vSpace,
-                      TextField(
-                        controller: _lastNameController,
-                        cursorColor: Colors.grey,
-                        decoration: _inputDecoration(
-                          hint: 'Enter your last name',
-                          errorText: _lastNameError,
-                        ),
-                        onChanged: (value) {
-                          if (_lastNameError != null) {
-                            setState(() {
-                              _lastNameError = null;
-                            });
-                          }
-                        },
-                      ),
-                      20.vSpace,
-
-                      _labelWithAsterisk("Gender"),
-                      8.vSpace,
-                      Row(
-                        children: [
-                          _genderOption(AppAssets.maleIcon, "Male"),
-                          _genderOption(AppAssets.femaleIcon, "Female"),
-                          _genderOption(AppAssets.otherIcon, "Other"),
-                        ],
-                      ),
-                      if (_genderError != null) ...[
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: 16.allPadding,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _labelWithAsterisk("First Name"),
                         8.vSpace,
-                        Text(
-                          _genderError!,
-                          style: AppTextStyles.titleSmall.copyWith(
-                            color: AppColors.error,
-                            fontSize: 12.sp,
+                        TextField(
+                          controller: _firstNameController,
+                          cursorColor: Colors.grey,
+                          decoration: _inputDecoration(
+                            hint: 'Enter your first name',
+                            errorText: _firstNameError,
                           ),
+                          onChanged: (value) {
+                            if (_firstNameError != null) {
+                              setState(() {
+                                _firstNameError = null;
+                              });
+                            }
+                          },
+                        ),
+                        20.vSpace,
+
+                        _labelWithAsterisk("Last Name"),
+                        8.vSpace,
+                        TextField(
+                          controller: _lastNameController,
+                          cursorColor: Colors.grey,
+                          decoration: _inputDecoration(
+                            hint: 'Enter your last name',
+                            errorText: _lastNameError,
+                          ),
+                          onChanged: (value) {
+                            if (_lastNameError != null) {
+                              setState(() {
+                                _lastNameError = null;
+                              });
+                            }
+                          },
+                        ),
+                        20.vSpace,
+
+                        _labelWithAsterisk("Gender"),
+                        8.vSpace,
+                        Row(
+                          children: [
+                            _genderOption(AppAssets.maleIcon, "Male"),
+                            _genderOption(AppAssets.femaleIcon, "Female"),
+                            _genderOption(AppAssets.otherIcon, "Other"),
+                          ],
+                        ),
+                        if (_genderError != null) ...[
+                          8.vSpace,
+                          Text(
+                            _genderError!,
+                            style: AppTextStyles.titleSmall.copyWith(
+                              color: AppColors.error,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ],
+                        20.vSpace,
+
+                        _labelWithAsterisk("Date of Birth"),
+                        8.vSpace,
+                        TextField(
+                          cursorColor: Colors.grey,
+                          readOnly: true,
+                          controller: TextEditingController(
+                            text: _selectedDate != null
+                                ? DateFormat(
+                                    'dd/MM/yyyy',
+                                  ).format(_selectedDate!)
+                                : '',
+                          ),
+                          decoration: _inputDecoration(
+                            hint: 'Select your date of birth',
+                            suffixIcon: Icon(
+                              Icons.calendar_today,
+                              color: Colors.grey,
+                              size: 20.rw,
+                            ),
+                            errorText: _dateOfBirthError,
+                          ),
+                          onTap: _pickDateOfBirth,
+                        ),
+                        20.vSpace,
+                        CustomButton(
+                          text: "Let's Begin",
+                          onPressed: _handleNext,
                         ),
                       ],
-                      20.vSpace,
-
-                      _labelWithAsterisk("Date of Birth"),
-                      8.vSpace,
-                      TextField(
-                        cursorColor: Colors.grey,
-                        readOnly: true,
-                        controller: TextEditingController(
-                          text: _selectedDate != null
-                              ? DateFormat('dd/MM/yyyy').format(_selectedDate!)
-                              : '',
-                        ),
-                        decoration: _inputDecoration(
-                          hint: 'Select your date of birth',
-                          suffixIcon: Icon(
-                            Icons.calendar_today,
-                            color: Colors.grey,
-                            size: 20.rw,
-                          ),
-                          errorText: _dateOfBirthError,
-                        ),
-                        onTap: _pickDateOfBirth,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-              CustomButton(text: "Let's Begin", onPressed: _handleNext),
-              30.vSpace,
-            ],
-          ),
+            ),
+
+            // Fixed bottom button container
+          ],
         ),
       ),
     );
