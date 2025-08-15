@@ -1,225 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:intl/intl.dart'; // for formatting date
-// import 'package:flutter_assignment3/core/constants/app_assets.dart';
-// import 'package:flutter_assignment3/core/theme/app_colors.dart';
-// import 'package:flutter_assignment3/core/theme/app_text_styles.dart';
-// import 'package:flutter_assignment3/core/widgets/custom_button.dart';
-// import 'package:flutter_assignment3/core/widgets/intro_appbar.dart';
-
-// class UserInfoScreen extends StatefulWidget {
-//   final VoidCallback? onBack;
-//   final int currentPage;
-//   final int totalPages;
-
-//   const UserInfoScreen({
-//     Key? key,
-//     this.onBack,
-//     required this.currentPage,
-//     required this.totalPages,
-//   }) : super(key: key);
-
-//   @override
-//   State<UserInfoScreen> createState() => _UserInfoScreenState();
-// }
-
-// class _UserInfoScreenState extends State<UserInfoScreen> {
-//   String? _selectedGender;
-//   DateTime? _selectedDate;
-
-//   InputDecoration _inputDecoration({required String hint, Widget? suffixIcon}) {
-//     return InputDecoration(
-//       hintText: hint,
-//       hintStyle: AppTextStyles.titleSmall.copyWith(color: Colors.grey),
-//       filled: true,
-//       fillColor: Colors.white,
-//       suffixIcon: suffixIcon,
-//       contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-//       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-//       enabledBorder: OutlineInputBorder(
-//         borderRadius: BorderRadius.circular(12),
-//         borderSide: BorderSide(color: AppColors.gray400),
-//       ),
-//       focusedBorder: OutlineInputBorder(
-//         borderRadius: BorderRadius.circular(12),
-//         borderSide: const BorderSide(color: AppColors.gray400, width: 1.5),
-//       ),
-//     );
-//   }
-
-//   Future<void> _pickDateOfBirth() async {
-//     final DateTime? picked = await showDatePicker(
-//       context: context,
-//       initialDate: DateTime(2000, 1, 1),
-//       firstDate: DateTime(1900),
-//       lastDate: DateTime.now(),
-//       builder: (BuildContext context, Widget? child) {
-//         return Theme(
-//           data: Theme.of(context).copyWith(
-//             dialogBackgroundColor: Colors.white,
-//             colorScheme: ColorScheme.light(
-//               primary: AppColors.primary, // Header background color
-//               onPrimary: Colors.white, // Header text color
-//               onSurface: Colors.black, // Body text color
-//             ),
-//             textButtonTheme: TextButtonThemeData(
-//               style: TextButton.styleFrom(
-//                 foregroundColor: AppColors.primary, // Button text color
-//               ),
-//             ),
-//           ),
-//           child: Center(
-//             // makes it smaller
-//             child: ConstrainedBox(
-//               constraints: const BoxConstraints(maxWidth: 350, maxHeight: 500),
-//               child: child!,
-//             ),
-//           ),
-//         );
-//       },
-//     );
-
-//     if (picked != null) {
-//       setState(() {
-//         _selectedDate = picked;
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: AppColors.white,
-//       appBar: IntroAppBar(
-//         title: "Hey there! Let's get to know you.",
-//         subtitle:
-//             "This helps us find jobs that are a perfect fit,\njust for you.",
-//         currentPage: widget.currentPage,
-//         totalPages: widget.totalPages,
-//         onBack: widget.onBack,
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(15.0),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             SingleChildScrollView(
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   _labelWithAsterisk("First Name"),
-//                   const SizedBox(height: 8),
-//                   TextField(
-//                     cursorColor: Colors.grey,
-//                     decoration: _inputDecoration(hint: 'Enter your first name'),
-//                   ),
-//                   const SizedBox(height: 20),
-
-//                   _labelWithAsterisk("Last Name"),
-//                   const SizedBox(height: 8),
-//                   TextField(
-//                     cursorColor: Colors.grey,
-//                     decoration: _inputDecoration(hint: 'Enter your last name'),
-//                   ),
-//                   const SizedBox(height: 20),
-
-//                   _labelWithAsterisk("Gender"),
-//                   const SizedBox(height: 8),
-//                   Row(
-//                     children: [
-//                       _genderOption(AppAssets.femaleIcon, "Male"),
-//                       _genderOption(AppAssets.maleIcon, "Female"),
-//                       _genderOption(AppAssets.otherIcon, "Other"),
-//                     ],
-//                   ),
-//                   const SizedBox(height: 20),
-
-//                   _labelWithAsterisk("Date of Birth"),
-//                   const SizedBox(height: 8),
-//                   TextField(
-//                     cursorColor: Colors.grey,
-//                     readOnly: true,
-//                     controller: TextEditingController(
-//                       text: _selectedDate != null
-//                           ? DateFormat('dd/MM/yyyy').format(_selectedDate!)
-//                           : '',
-//                     ),
-//                     decoration: _inputDecoration(
-//                       hint: 'Select your date of birth',
-//                       suffixIcon: const Icon(
-//                         Icons.calendar_today,
-//                         color: Colors.grey,
-//                       ),
-//                     ),
-//                     onTap: _pickDateOfBirth,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             // ),
-//             Spacer(),
-//             CustomButton(text: "Let’s Begin", onPressed: () {}),
-//             const SizedBox(height: 30),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _labelWithAsterisk(String label) {
-//     return RichText(
-//       text: TextSpan(
-//         children: [
-//           TextSpan(
-//             text: label,
-//             style: AppTextStyles.titleSmall.copyWith(color: AppColors.gray700),
-//           ),
-//           TextSpan(
-//             text: " *",
-//             style: AppTextStyles.titleSmall.copyWith(color: AppColors.error),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   Widget _genderOption(String iconPath, String label) {
-//     final bool isSelected = _selectedGender == label;
-//     return Expanded(
-//       child: GestureDetector(
-//         onTap: () {
-//           setState(() {
-//             _selectedGender = label;
-//           });
-//         },
-//         child: Container(
-//           margin: const EdgeInsets.symmetric(horizontal: 4),
-//           padding: const EdgeInsets.symmetric(vertical: 12),
-//           decoration: BoxDecoration(
-//             color: isSelected ? AppColors.accentBlue : Colors.white,
-//             borderRadius: BorderRadius.circular(12),
-//             border: Border.all(
-//               color: isSelected ? AppColors.secondary : Colors.grey.shade300,
-//               width: 1.5,
-//             ),
-//           ),
-//           child: Column(
-//             children: [
-//               Image.asset(iconPath, height: 24, width: 24),
-//               const SizedBox(height: 6),
-//               Text(
-//                 label,
-//                 style: AppTextStyles.titleSmall.copyWith(
-//                   color: AppColors.gray700,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:flutter_assignment3/core/constants/app_sizes.dart';
 import 'package:intl/intl.dart';
@@ -233,12 +11,14 @@ class UserInfoScreen extends StatefulWidget {
   final VoidCallback? onBack;
   final int currentPage;
   final int totalPages;
+  final VoidCallback? onNext;
 
   const UserInfoScreen({
     Key? key,
     this.onBack,
     required this.currentPage,
     required this.totalPages,
+    this.onNext,
   }) : super(key: key);
 
   @override
@@ -249,7 +29,24 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   String? _selectedGender;
   DateTime? _selectedDate;
 
-  InputDecoration _inputDecoration({required String hint, Widget? suffixIcon}) {
+  // Form controllers
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+
+  // Form validation keys
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  // Error messages
+  String? _firstNameError;
+  String? _lastNameError;
+  String? _genderError;
+  String? _dateOfBirthError;
+
+  InputDecoration _inputDecoration({
+    required String hint,
+    Widget? suffixIcon,
+    String? errorText,
+  }) {
     return InputDecoration(
       hintText: hint,
       hintStyle: AppTextStyles.titleSmall.copyWith(
@@ -269,6 +66,15 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         borderRadius: BorderRadius.circular(12.rw),
         borderSide: BorderSide(color: AppColors.gray400, width: 1.5.rw),
       ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.rw),
+        borderSide: BorderSide(color: AppColors.error, width: 1.rw),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.rw),
+        borderSide: BorderSide(color: AppColors.error, width: 1.5.rw),
+      ),
+      errorText: errorText,
     );
   }
 
@@ -304,8 +110,83 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
+        _dateOfBirthError = null;
       });
     }
+  }
+
+  // Form validation
+  bool _validateForm() {
+    bool isValid = true;
+
+    // Clear previous errors
+    setState(() {
+      _firstNameError = null;
+      _lastNameError = null;
+      _genderError = null;
+      _dateOfBirthError = null;
+    });
+
+    // Validate first name
+    if (_firstNameController.text.trim().isEmpty) {
+      setState(() {
+        _firstNameError = 'First name is required';
+      });
+      isValid = false;
+    } else if (_firstNameController.text.trim().length < 2) {
+      setState(() {
+        _firstNameError = 'First name must be at least 2 characters';
+      });
+      isValid = false;
+    }
+
+    // Validate last name
+    if (_lastNameController.text.trim().isEmpty) {
+      setState(() {
+        _lastNameError = 'Last name is required';
+      });
+      isValid = false;
+    } else if (_lastNameController.text.trim().length < 2) {
+      setState(() {
+        _lastNameError = 'Last name must be at least 2 characters';
+      });
+      isValid = false;
+    }
+
+    // Validate gender
+    if (_selectedGender == null) {
+      setState(() {
+        _genderError = 'Please select your gender';
+      });
+      isValid = false;
+    }
+
+    // Validate date of birth
+    if (_selectedDate == null) {
+      setState(() {
+        _dateOfBirthError = 'Please select your date of birth';
+      });
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  // Handle next button press
+  void _handleNext() {
+    if (_validateForm()) {
+      // Save data or pass to next screen
+      if (widget.onNext != null) {
+        widget.onNext!();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -320,75 +201,107 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         totalPages: widget.totalPages,
         onBack: widget.onBack,
       ),
-      resizeToAvoidBottomInset: false, // important
-      body: Padding(
-        padding: 16.allPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _labelWithAsterisk("First Name"),
-                    8.vSpace,
-                    TextField(
-                      cursorColor: Colors.grey,
-                      decoration: _inputDecoration(
-                        hint: 'Enter your first name',
-                      ),
-                    ),
-                    20.vSpace,
-
-                    _labelWithAsterisk("Last Name"),
-                    8.vSpace,
-                    TextField(
-                      cursorColor: Colors.grey,
-                      decoration: _inputDecoration(
-                        hint: 'Enter your last name',
-                      ),
-                    ),
-                    20.vSpace,
-
-                    _labelWithAsterisk("Gender"),
-                    8.vSpace,
-                    Row(
-                      children: [
-                        _genderOption(AppAssets.maleIcon, "Male"),
-                        _genderOption(AppAssets.femaleIcon, "Female"),
-                        _genderOption(AppAssets.otherIcon, "Other"),
-                      ],
-                    ),
-                    20.vSpace,
-
-                    _labelWithAsterisk("Date of Birth"),
-                    8.vSpace,
-                    TextField(
-                      cursorColor: Colors.grey,
-                      readOnly: true,
-                      controller: TextEditingController(
-                        text: _selectedDate != null
-                            ? DateFormat('dd/MM/yyyy').format(_selectedDate!)
-                            : '',
-                      ),
-                      decoration: _inputDecoration(
-                        hint: 'Select your date of birth',
-                        suffixIcon: Icon(
-                          Icons.calendar_today,
-                          color: Colors.grey,
-                          size: 20.rw,
+      resizeToAvoidBottomInset: false,
+      body: Form(
+        key: _formKey,
+        child: Padding(
+          padding: 16.allPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _labelWithAsterisk("First Name"),
+                      8.vSpace,
+                      TextField(
+                        controller: _firstNameController,
+                        cursorColor: Colors.grey,
+                        decoration: _inputDecoration(
+                          hint: 'Enter your first name',
+                          errorText: _firstNameError,
                         ),
+                        onChanged: (value) {
+                          if (_firstNameError != null) {
+                            setState(() {
+                              _firstNameError = null;
+                            });
+                          }
+                        },
                       ),
-                      onTap: _pickDateOfBirth,
-                    ),
-                  ],
+                      20.vSpace,
+
+                      _labelWithAsterisk("Last Name"),
+                      8.vSpace,
+                      TextField(
+                        controller: _lastNameController,
+                        cursorColor: Colors.grey,
+                        decoration: _inputDecoration(
+                          hint: 'Enter your last name',
+                          errorText: _lastNameError,
+                        ),
+                        onChanged: (value) {
+                          if (_lastNameError != null) {
+                            setState(() {
+                              _lastNameError = null;
+                            });
+                          }
+                        },
+                      ),
+                      20.vSpace,
+
+                      _labelWithAsterisk("Gender"),
+                      8.vSpace,
+                      Row(
+                        children: [
+                          _genderOption(AppAssets.maleIcon, "Male"),
+                          _genderOption(AppAssets.femaleIcon, "Female"),
+                          _genderOption(AppAssets.otherIcon, "Other"),
+                        ],
+                      ),
+                      if (_genderError != null) ...[
+                        8.vSpace,
+                        Text(
+                          _genderError!,
+                          style: AppTextStyles.titleSmall.copyWith(
+                            color: AppColors.error,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                      ],
+                      20.vSpace,
+
+                      _labelWithAsterisk("Date of Birth"),
+                      8.vSpace,
+                      TextField(
+                        cursorColor: Colors.grey,
+                        readOnly: true,
+                        controller: TextEditingController(
+                          text: _selectedDate != null
+                              ? DateFormat('dd/MM/yyyy').format(_selectedDate!)
+                              : '',
+                        ),
+                        decoration: _inputDecoration(
+                          hint: 'Select your date of birth',
+                          suffixIcon: Icon(
+                            Icons.calendar_today,
+                            color: Colors.grey,
+                            size: 20.rw,
+                          ),
+                          errorText: _dateOfBirthError,
+                        ),
+                        onTap: _pickDateOfBirth,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            CustomButton(text: "Let’s Begin", onPressed: () {}),
-            30.vSpace,
-          ],
+              CustomButton(text: "Let's Begin", onPressed: _handleNext),
+              30.vSpace,
+            ],
+          ),
         ),
       ),
     );

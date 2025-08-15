@@ -55,12 +55,14 @@ class Chips extends StatelessWidget {
   final bool isSelected;
   final double horizontalPadding;
   final double verticalPadding;
+  final VoidCallback? onTap;
 
   const Chips({
     required this.label,
     this.isSelected = false,
     this.horizontalPadding = 8, // default value
     this.verticalPadding = 5, // default value
+    this.onTap,
     Key? key,
   }) : super(key: key);
 
@@ -77,7 +79,9 @@ class Chips extends StatelessWidget {
       selected: isSelected,
       showCheckmark: false,
       onSelected: (bool selected) {
-        // Add selection logic here if needed
+        if (onTap != null) {
+          onTap!();
+        }
       },
       selectedColor: AppColors.accentBlue,
       backgroundColor: AppColors.white,

@@ -29,11 +29,40 @@ class _IntroScreenState extends State<IntroScreen> {
     }
   }
 
+  void _goToNext() {
+    if (_currentPage < slides.length - 1) {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   List<Widget> get slides => [
-    UserInfoScreen(currentPage: 0, totalPages: 5, onBack: _goBack),
-    EducationalBackgroundScreen(currentPage: 1, totalPages: 5, onBack: _goBack),
-    JobHuntingScreen(currentPage: 2, totalPages: 5, onBack: _goBack),
-    SkillsScreen(currentPage: 3, totalPages: 5, onBack: _goBack),
+    UserInfoScreen(
+      currentPage: 0,
+      totalPages: 5,
+      onBack: _goBack,
+      onNext: _goToNext,
+    ),
+    EducationalBackgroundScreen(
+      currentPage: 1,
+      totalPages: 5,
+      onBack: _goBack,
+      onNext: _goToNext,
+    ),
+    JobHuntingScreen(
+      currentPage: 2,
+      totalPages: 5,
+      onBack: _goBack,
+      onNext: _goToNext,
+    ),
+    SkillsScreen(
+      currentPage: 3,
+      totalPages: 5,
+      onBack: _goBack,
+      onNext: _goToNext,
+    ),
     WelcomeScreen(
       userName: "LLdsld",
       currentPage: 4,
@@ -52,6 +81,8 @@ class _IntroScreenState extends State<IntroScreen> {
             child: PageView.builder(
               controller: _pageController,
               itemCount: slides.length,
+              physics:
+                  const NeverScrollableScrollPhysics(), // Disable horizontal scrolling
               onPageChanged: (index) {
                 setState(() => _currentPage = index);
               },

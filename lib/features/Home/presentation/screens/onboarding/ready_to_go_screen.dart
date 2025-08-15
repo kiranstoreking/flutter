@@ -541,6 +541,49 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       ),
                     ),
                     64.vSpace,
+
+                    // Get Started Button
+                    ScaleTransition(
+                      scale: Tween<double>(begin: 0.9, end: 1.0).animate(
+                        CurvedAnimation(
+                          parent: _textController,
+                          curve: Curves.easeOutBack,
+                        ),
+                      ),
+                      child: FadeTransition(
+                        opacity: _textController,
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(horizontal: 32.rw),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Navigate to main app or home screen
+                              Navigator.of(
+                                context,
+                              ).pushReplacementNamed('/home');
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.secondary,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 16.rh),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.rw),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              'Get Started',
+                              style: AppTextStyles.titleMedium.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    32.vSpace,
                   ],
                 ),
               ),
